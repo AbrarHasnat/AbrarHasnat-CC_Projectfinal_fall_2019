@@ -19,18 +19,20 @@ let buttonSt;
 let buttonXadd;
 let buttonXless;
 let buttonYpos;
+let temp1;
 let clouds = [];
 
 
 function setup() {
   // put setup code here
 
-	createCanvas(1200,1000); //Create 
+	createCanvas(screen.width,screen.height-100); //Create 
 	wind = 0;
-	temp = 1; 
+	temp1 = 1;
+	 
 	buttonXless = (width/2) -150;
 	buttonXadd = (width/2) + 50;
-	buttonYpos = (height/2) -100;
+	buttonYpos = (height/2) -60;
 	bgclrR = 0;
 	bgclrG = 204;
 	bgclrB = 255;
@@ -73,6 +75,7 @@ function draw() {
 
     
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
+	temp = constrain(temp1,-1,1);
 	textSize(22);
     fill(255);
     text('Precipitation',buttonXless+65,buttonYpos+20);
@@ -84,7 +87,7 @@ function draw() {
     text('Temperature',buttonXless+65,buttonYpos+70);
     
 
-	if (clouds.length > 12){
+	if (clouds.length > 12 && temp > 0){
 		if (frameCount%100 == 0) {
 			x = random(0,width); //starting position of all strokes in the middle
 	  		y = 100; 
@@ -183,10 +186,16 @@ function subWind() {
 }
 
 function addTemp() {
-	temp += 1;
+	temp1 += 1;
+	if (temp1 > 1) {
+		temp1 = 1;
+	}
 }
 function subTemp() {
-	temp -= 1;
+	temp1 -= 1;
+	if (temp1 < -1) {
+		temp1 = -1;
+	}
 }
 
 
