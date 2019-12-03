@@ -11,6 +11,11 @@ let bgclrG;
 let bgclrB;
 let shade; //Shade for the clouds
 let wind; //speed of the clouds moving
+let temp;
+let x;
+let y;
+let buttonAt; //Button to
+let buttonSt;
 
 
 
@@ -18,8 +23,9 @@ let clouds = [];
 function setup() {
   // put setup code here
 
-	createCanvas(800,800); //Create 
-	wind = 0; 
+	createCanvas(1200,1000); //Create 
+	wind = 0;
+	temp = 1; 
 
 	bgclrR = 0;
 	bgclrG = 204;
@@ -48,6 +54,14 @@ function setup() {
     buttonSw.position(10, 690);
     buttonSw.mousePressed(subWind);
 
+    buttonAt = createButton("Inc Temp");
+    buttonAt.position(110, 730);
+    buttonAt.mousePressed(addTemp);
+
+    buttonSt = createButton("Dec Temp");
+    buttonSt.position(10, 730);
+    buttonSt.mousePressed(subTemp);
+
     //buttonTr = createButton("Toggle Rain");
     //buttonTr.position(210, 650);
     //buttonTr.mousePressed(toggle);
@@ -57,12 +71,55 @@ function setup() {
 
 
 function draw() {
+
+    
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
-	console.log(wind);
+
+	if (clouds.length > 12){
+		if (frameCount%100 == 0) {
+			x = random(0,width); //starting position of all strokes in the middle
+	  		y = 100; 
+			while(y<800){//y will go down to the bottom of the screen
+	     		let leX = x + int(random(-12,12)); //creates the jagged effects
+	    		let leY = y + 1;    
+	     		strokeWeight(2);
+	    		stroke(255,215,0); //gold
+	    		line(x,y,leX,leY);
+	     		x = leX; 
+	     		y = leY;  
+	  		}
+	 		y = y+1;
+		}
+		if (frameCount%70 == 0) {
+			x = random(0,width); //starting position of all strokes in the middle
+	  		y = 100; 
+			while(y<800){//y will go down to the bottom of the screen
+	     		let leX = x + int(random(-12,12)); //creates the jagged effects
+	    		let leY = y + 1;    
+	     		strokeWeight(2);
+	    		stroke(255,215,0); //gold
+	    		line(x,y,leX,leY);
+	     		x = leX; 
+	     		y = leY;  
+	  		}
+	 		y = y+1;
+		}
+		if (frameCount%69 == 0){
+			background(255);
+		}
+		if (frameCount%99 == 0){
+			background(255);
+		}
+ 	}
+
+
+
+	console.log(temp);
 	for (i = 0; i < clouds.length; i++) { //Interate through clouds
 		clouds[i].display();
 		clouds[i].update();
 		clouds[i].displayRain();
+		//clouds[i].lightning();
 
 	}
 
@@ -84,6 +141,7 @@ function draw() {
 	    ellipse(0, 0, 75, 75);
 	    stroke(245, 187, 87);
 	    strokeWeight(8);
+	    scale(temp/1.5);
 	    line(0, -60, 0, -40);
 	    line(0, 40, 0, 60);
 	    line(-45, -45, -30, -30);
@@ -115,6 +173,12 @@ function subWind() {
 	wind -= 1;
 }
 
+function addTemp() {
+	temp += 1;
+}
+function subTemp() {
+	temp -= 1;
+}
 
 
 
@@ -122,7 +186,7 @@ function subWind() {
 class Cloud {
 
 	constructor(){
-		this.x = random(10,800);
+		this.x = random(10,1200);
 		this.y = 700;
 		this.raining = false;
 		this.bord = random(100,150); //How far from the top the clouds stop
@@ -130,11 +194,8 @@ class Cloud {
     	this.velocity = new createVector(0, 0);
     	this.acceleration = new createVector(0.00, 0.09);
     	this.rain = [];
-  
-
 	}
 
-	
 
 	update() {
 
@@ -150,8 +211,8 @@ class Cloud {
     		else {
     			this.raining = false;
     		}
-    		this.location.x += constrain(wind,0,4); //Wind max speed = 4
-    		if (this.location.x > 800) {
+    		this.location.x += constrain(wind,-4,4); //Wind max speed = 4
+    		if (this.location.x > 1200) {
     			this.location.x = 0; //clouds come back after going off canvas
     		}
     		
@@ -165,8 +226,9 @@ class Cloud {
     displayRain() {
     	if (this.raining == true) {
 			for (let i = 0; i < this.rain.length; i++) { //Goes through raindrops
+					this.rain[i].drip();  //switched line 169
 		    	this.rain[i].display();
-		    	this.rain[i].drip();
+		    	
 	  		}
 
 		}
@@ -175,8 +237,8 @@ class Cloud {
 
 
 	display() { //Displays clouds 
-		shade = 255-((clouds.length)*10); //The greater the number of clouds the "denser"/darker the clouds are
-		fill(constrain(shade,100,255));
+		shade = 255-((clouds.length)*18); //The greater the number of clouds the "denser"/darker the clouds are
+		fill(constrain(shade,50,255));
 		noStroke();
 		arc(this.location.x - 10, this.location.y, 25 * size, 20 * size, PI + TWO_PI, TWO_PI); //First puff (1)
 		arc(this.location.x + 5, this.location.y, 25 * size, 35 * size, PI + TWO_PI, TWO_PI); // Upper Puff (2)
@@ -194,18 +256,31 @@ class Drop{
 		this.xor = x_;
 		this.yor = y_;
 		this.x = x_;
-		this.y = y_;
+		this.y = y_ + random(-15,15);
 		this.length = 12;
 		this.spd = 10;
 	}
 
 	drip() {
-		this.y += this.spd;
+		if (temp>0){
+			this.y += this.spd;
+		} else{
+			this.spd = 3;
+			this.y += this.spd;
+		}
+		//this.y += this.spd;
 
 	}
 	display() {
-		stroke(35,117,194);
-		line(this.x,this.y,this.x,this.y+this.length);
+		if (temp>0){
+			stroke(35,117,194);
+			line(this.x,this.y,this.x,this.y+this.length);
+		} else{
+			stroke(255)
+			ellipse(this.x,this.y,random(1,5),random(1,5))
+		}		
+
+
 	}
 
 }
