@@ -16,17 +16,21 @@ let x;
 let y;
 let buttonAt; //Button to
 let buttonSt;
-
-
-
+let buttonXadd;
+let buttonXless;
+let buttonYpos;
 let clouds = [];
+
+
 function setup() {
   // put setup code here
 
 	createCanvas(1200,1000); //Create 
 	wind = 0;
 	temp = 1; 
-
+	buttonXless = (width/2) -150;
+	buttonXadd = (width/2) + 50;
+	buttonYpos = (height/2) -100;
 	bgclrR = 0;
 	bgclrG = 204;
 	bgclrB = 255;
@@ -38,42 +42,47 @@ function setup() {
 
     //Buttons For Weather Control
 
-    buttonAc = createButton("Add Clouds");
-    buttonAc.position(110, 650);
+    buttonAc = createButton("Add");//Add Clouds
+    buttonAc.position(buttonXadd, buttonYpos);
     buttonAc.mousePressed(addClouds);
 
-    buttonSc = createButton("Sub Clouds");
-    buttonSc.position(10, 650);
+    buttonSc = createButton("Less");
+    buttonSc.position(buttonXless, buttonYpos);
     buttonSc.mousePressed(subClouds);
+    
 
-    buttonAw = createButton("Add Wind");
-    buttonAw.position(110, 690);
+    buttonAw = createButton("Add");//Add wind
+    buttonAw.position(buttonXadd, buttonYpos+25);
     buttonAw.mousePressed(addWind);
 
-    buttonSw = createButton("Sub wind");
-    buttonSw.position(10, 690);
+    buttonSw = createButton("Less");
+    buttonSw.position(buttonXless, buttonYpos+25);
     buttonSw.mousePressed(subWind);
 
-    buttonAt = createButton("Inc Temp");
-    buttonAt.position(110, 730);
+    buttonAt = createButton("Add"); //Add temp
+    buttonAt.position(buttonXadd, buttonYpos+50);
     buttonAt.mousePressed(addTemp);
 
-    buttonSt = createButton("Dec Temp");
-    buttonSt.position(10, 730);
+    buttonSt = createButton("Less");
+    buttonSt.position(buttonXless, buttonYpos+50);
     buttonSt.mousePressed(subTemp);
-
-    //buttonTr = createButton("Toggle Rain");
-    //buttonTr.position(210, 650);
-    //buttonTr.mousePressed(toggle);
+//buttonTr.mousePressed(toggle);
 }
-
-
-
 
 function draw() {
 
     
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
+	textSize(22);
+    fill(255);
+    text('Precipitation',buttonXless+65,buttonYpos+20);
+    textSize(22);
+    fill(255);
+    text('Wind',buttonXless+100,buttonYpos+45);
+    textSize(22);
+    fill(255);
+    text('Temperature',buttonXless+65,buttonYpos+70);
+    
 
 	if (clouds.length > 12){
 		if (frameCount%100 == 0) {
