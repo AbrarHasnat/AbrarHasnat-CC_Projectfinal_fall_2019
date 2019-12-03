@@ -75,7 +75,7 @@ function draw() {
 
     
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
-	temp = constrain(temp1,-1,1);
+	temp = constrain(temp1,-1,2);
 	textSize(22);
     fill(255);
     text('Precipitation',buttonXless+65,buttonYpos+20);
@@ -87,7 +87,7 @@ function draw() {
     text('Temperature',buttonXless+65,buttonYpos+70);
     
 
-	if (clouds.length > 12 && temp > 0){
+	if (clouds.length > 20 && temp > 0){
 		if (frameCount%100 == 0) {
 			x = random(0,width); //starting position of all strokes in the middle
 	  		y = 100; 
@@ -171,8 +171,10 @@ function draw() {
 // Botton Functions
 
 function addClouds() {
-	let newCloud = new Cloud();
-	clouds.push(newCloud);
+	for (let i = 0; i<3;i++){
+		let newCloud = new Cloud();
+		clouds.push(newCloud);
+	}
 }
 
 function subClouds() {
@@ -187,8 +189,8 @@ function subWind() {
 
 function addTemp() {
 	temp1 += 1;
-	if (temp1 > 1) {
-		temp1 = 1;
+	if (temp1 > 2) {
+		temp1 = 2;
 	}
 }
 function subTemp() {
