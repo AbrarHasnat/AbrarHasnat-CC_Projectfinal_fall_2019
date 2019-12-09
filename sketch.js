@@ -21,14 +21,20 @@ let buttonXless;
 let buttonYpos;
 let temp1;
 let clouds = [];
+let snowH;
+let breeze = [];
+let tornado;
 
-
+function preload(){
+	tornado = loadImage("tornado.png");
+}
 function setup() {
   // put setup code here
-
+  
 	createCanvas(screen.width,screen.height-100); //Create 
 	wind = 0;
 	temp1 = 1;
+	snowH = 0;
 	 
 	buttonXless = (width/2) -150;
 	buttonXadd = (width/2) + 50;
@@ -41,6 +47,10 @@ function setup() {
 	size = 2.5;
 	center = random(10,800);
     center1 = random(10,800);
+    for (let i = 0; i<4;i++){
+		let newBreeze = new Breeze();
+		breeze.push(newBreeze);
+	}
 
     //Buttons For Weather Control
 
@@ -72,99 +82,126 @@ function setup() {
 }
 
 function draw() {
-
+	
     
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
-	temp = constrain(temp1,-1,2);
-	textSize(22);
-    fill(255);
-    text('Precipitation',buttonXless+65,buttonYpos+20);
-    textSize(22);
-    fill(255);
-    text('Wind',buttonXless+100,buttonYpos+45);
-    textSize(22);
-    fill(255);
-    text('Temperature',buttonXless+65,buttonYpos+70);
-    
+	if(wind>3 || wind <-3) {
+		background(200);
+		push();
+		translate((width/2-450)+random(-5,5),0);
+		scale(.28);
+		image(tornado,100,100);
+		pop();
+	}else{
 
-	if (clouds.length > 20 && temp > 0){
-		if (frameCount%100 == 0) {
-			x = random(0,width); //starting position of all strokes in the middle
-	  		y = 100; 
-			while(y<800){//y will go down to the bottom of the screen
-	     		let leX = x + int(random(-12,12)); //creates the jagged effects
-	    		let leY = y + 1;    
-	     		strokeWeight(2);
-	    		stroke(255,215,0); //gold
-	    		line(x,y,leX,leY);
-	     		x = leX; 
-	     		y = leY;  
-	  		}
-	 		y = y+1;
+
+		temp = constrain(temp1,-1,2);
+		textSize(22);
+			fill(255);
+			text('Precipitation',buttonXless+65,buttonYpos+20);
+			textSize(22);
+			fill(255);
+			text('Wind',buttonXless+100,buttonYpos+45);
+			textSize(22);
+			fill(255);
+			text('Temperature',buttonXless+65,buttonYpos+70);
+
+
+		if (clouds.length > 20 && temp > 0){
+			//thunder.play();
+			if (frameCount%100 == 0) {
+				x = random(0,width); //starting position of all strokes in the middle
+					y = 100; 
+				while(y<800){//y will go down to the bottom of the screen
+						let leX = x + int(random(-12,12)); //creates the jagged effects
+						let leY = y + 1;    
+						strokeWeight(2);
+						stroke(255,215,0); //gold
+						line(x,y,leX,leY);
+						x = leX; 
+						y = leY;  
+					}
+				y = y+1;
+			}
+			if (frameCount%70 == 0) {
+				x = random(0,width); //starting position of all strokes in the middle
+					y = 100; 
+				while(y<800){//y will go down to the bottom of the screen
+						let leX = x + int(random(-12,12)); //creates the jagged effects
+						let leY = y + 1;    
+						strokeWeight(2);
+						stroke(255,215,0); //gold
+						line(x,y,leX,leY);
+						x = leX; 
+						y = leY;  
+					}
+				y = y+1;
+			}
+			if (frameCount%69 == 0){
+				background(255);
+			}
+			if (frameCount%99 == 0){
+				background(255);
+			}
 		}
-		if (frameCount%70 == 0) {
-			x = random(0,width); //starting position of all strokes in the middle
-	  		y = 100; 
-			while(y<800){//y will go down to the bottom of the screen
-	     		let leX = x + int(random(-12,12)); //creates the jagged effects
-	    		let leY = y + 1;    
-	     		strokeWeight(2);
-	    		stroke(255,215,0); //gold
-	    		line(x,y,leX,leY);
-	     		x = leX; 
-	     		y = leY;  
-	  		}
-	 		y = y+1;
+
+
+
+		console.log(temp);
+		for (i = 0; i < clouds.length; i++) { //Interate through clouds
+			clouds[i].display();
+			clouds[i].update();
+			clouds[i].displayRain();
+			//clouds[i].lightning();
+
 		}
-		if (frameCount%69 == 0){
-			background(255);
+
+		if (wind>2 || wind<-2){
+			for (i = 0; i < breeze.length; i++) { //Interate through clouds
+				breeze[i].display();
+				breeze[i].update();
+			//clouds[i].lightning();
+			}
 		}
-		if (frameCount%99 == 0){
-			background(255);
+
+		if (clouds.length > 10) { //if more than 10 clouds, will start to rain
+			seto = false;
 		}
- 	}
+		else {
+			seto = true;
+		}
 
-
-
-	console.log(temp);
-	for (i = 0; i < clouds.length; i++) { //Interate through clouds
-		clouds[i].display();
-		clouds[i].update();
-		clouds[i].displayRain();
-		//clouds[i].lightning();
-
+		if (seto == true) { // if not enough clouds, its still considered "sunny"
+			//Sun
+			fill(245, 187, 87);
+				stroke(225);
+				strokeWeight(2);
+				push();
+				translate(80,80);
+				rotate(radians(frameCount / 40)); //
+				ellipse(0, 0, 75, 75);
+				stroke(245, 187, 87);
+				strokeWeight(8);
+				scale(temp/1.5);
+				line(0, -60, 0, -40);
+				line(0, 40, 0, 60);
+				line(-45, -45, -30, -30);
+				line(45, -45, 30, -30);
+				line(-60, 0, -40, 0);
+				line(40, 0, 60, 0);
+				line(-45, 45, -30, 30);
+				line(45, 45, 30, 30);
+				pop();
+				noStroke();
+		}
+		if (temp <= 0 && seto == false) {
+			snowH +=0.1;
+			fill(212);
+			rect(0,height-snowH,width,snowH)
+		} else{
+			snowH = 0;
+		}	
 	}
-
-	if (clouds.length > 10) { //if more than 10 clouds, will start to rain
-		seto = false;
-	}
-	else {
-		seto = true;
-	}
-
-	if (seto == true) { // if not enough clouds, its still considered "sunny"
-		//Sun
-		fill(245, 187, 87);
-  		stroke(225);
-  		strokeWeight(2);
-  		push();
-  		translate(80,80);
-  		rotate(radians(frameCount / 40)); //
-	    ellipse(0, 0, 75, 75);
-	    stroke(245, 187, 87);
-	    strokeWeight(8);
-	    scale(temp/1.5);
-	    line(0, -60, 0, -40);
-	    line(0, 40, 0, 60);
-	    line(-45, -45, -30, -30);
-	    line(45, -45, 30, -30);
-	    line(-60, 0, -40, 0);
-	    line(40, 0, 60, 0);
-	    line(-45, 45, -30, 30);
-	    line(45, 45, 30, 30);
-	    pop();
-	    noStroke();
-	}	    
 }
 
 
@@ -202,11 +239,45 @@ function subTemp() {
 
 
 
+class Breeze{
+	constructor(){
+		this.xLeft = random(0,width);
+		//this.xRight = (this.xLeft + 20);
+		this.y = random(0,height);
+		this.location = new createVector(this.xLeft,this.y)
+		
+	}
 
+	update(){
+		if(wind<0){
+			this.location.x += wind;
+		} else if(wind > 0){
+			this.location.x += wind;
+		}
+		if (this.location.x > width) {
+    		this.location.x = 0; //clouds come back after going off canvas
+    	}
+    	if (this.location.x < 0) {
+    			this.location.x = width; //clouds come back after going off canvas
+    	}
+    	this.location.y += random(-1,1);
+
+	} 
+
+	display(){
+		
+		stroke(150,150,150,[0.1]);
+		line(this.location.x-10,this.location.y,(this.location.x + 120)-10,this.location.y)
+		line(this.location.x,this.location.y+20,(this.location.x + 120),this.location.y+20)
+		line(this.location.x-10,this.location.y+40,(this.location.x + 120)-10,this.location.y+40)
+	}
+
+
+}
 class Cloud {
 
 	constructor(){
-		this.x = random(10,1200);
+		this.x = random(10,width);
 		this.y = 700;
 		this.raining = false;
 		this.bord = random(100,150); //How far from the top the clouds stop
@@ -232,8 +303,11 @@ class Cloud {
     			this.raining = false;
     		}
     		this.location.x += constrain(wind,-4,4); //Wind max speed = 4
-    		if (this.location.x > 1200) {
+    		if (this.location.x > width) {
     			this.location.x = 0; //clouds come back after going off canvas
+    		}
+    		if (this.location.x < 0) {
+    			this.location.x = width; //clouds come back after going off canvas
     		}
     		
     	}
@@ -246,7 +320,7 @@ class Cloud {
     displayRain() {
     	if (this.raining == true) {
 			for (let i = 0; i < this.rain.length; i++) { //Goes through raindrops
-					this.rain[i].drip();  //switched line 169
+				this.rain[i].drip();  //switched line 169
 		    	this.rain[i].display();
 		    	
 	  		}
@@ -287,8 +361,7 @@ class Drop{
 		} else{
 			this.spd = 3;
 			this.y += this.spd;
-		}
-		//this.y += this.spd;
+		}	//this.y += this.spd;
 
 	}
 	display() {
@@ -297,7 +370,7 @@ class Drop{
 			line(this.x,this.y,this.x,this.y+this.length);
 		} else{
 			stroke(255)
-			ellipse(this.x,this.y,random(1,5),random(1,5))
+			ellipse(this.x,this.y,2,2)
 		}		
 
 
