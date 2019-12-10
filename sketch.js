@@ -14,6 +14,8 @@ let wind; //speed of the clouds moving
 let temp;
 let x;
 let y;
+let x1;
+let y1;
 let buttonAt; //Button to
 let buttonSt;
 let buttonXadd;
@@ -24,9 +26,15 @@ let clouds = [];
 let snowH;
 let breeze = [];
 let tornado;
+let tornadoSound;
+let thunder;
+let angle;
 
 function preload(){
 	tornado = loadImage("tornado.png");
+	tornadoSound = loadSound("tornado_loop.mp3");
+	thunder = loadSound("thunder_strike_2-Mike_Koenig-2099467696.mp3");
+	
 }
 function setup() {
   // put setup code here
@@ -35,11 +43,14 @@ function setup() {
 	wind = 0;
 	temp1 = 1;
 	snowH = 0;
-	 
+	x1 = width/2;
+	y1 = height/2;
+	angleMode(RADIANS); 
 	buttonXless = (width/2) -150;
 	buttonXadd = (width/2) + 50;
 	buttonYpos = (height/2) -60;
 	bgclrR = 0;
+	angle = 0
 	bgclrG = 204;
 	bgclrB = 255;
 	background(bgclrR,bgclrG,bgclrB);
@@ -85,14 +96,18 @@ function draw() {
 	
     
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
+	
+	
 	if(wind>3 || wind <-3) {
+		tornadoSound.play();
 		background(200);
 		push();
 		translate((width/2-450)+random(-5,5),0);
-		scale(.28);
+		scale(0.28);
 		image(tornado,100,100);
 		pop();
 	}else{
+		tornadoSound.stop();
 
 
 		temp = constrain(temp1,-1,2);
@@ -108,7 +123,8 @@ function draw() {
 
 
 		if (clouds.length > 20 && temp > 0){
-			//thunder.play();
+			thunder.setVolume(0.1);
+			thunder.play();
 			if (frameCount%100 == 0) {
 				x = random(0,width); //starting position of all strokes in the middle
 					y = 100; 
@@ -144,6 +160,7 @@ function draw() {
 				background(255);
 			}
 		}
+		else {thunder.stop()}
 
 
 
@@ -157,6 +174,24 @@ function draw() {
 		}
 
 		if (wind>2 || wind<-2){
+			push();
+			//House
+			translate(x1,y1);
+			rotate(angle);
+			fill(80);
+			stroke(255);
+			rect(100,200,200,200);
+			rect(120,120,20,60);
+			triangle(100,200, 300,200, 200,100);
+			rect(220,350,30,50);
+			//window
+			fill(200);
+			rect(130,270,40,40);
+			pop();
+			angle += 0.1;
+			if(wind > 0){
+				x1 += 2;
+			}else {x1-=2}
 			for (i = 0; i < breeze.length; i++) { //Interate through clouds
 				breeze[i].display();
 				breeze[i].update();
@@ -195,7 +230,7 @@ function draw() {
 				noStroke();
 		}
 		if (temp <= 0 && seto == false) {
-			snowH +=0.1;
+			snowH +=0.5; //snow rises
 			fill(212);
 			rect(0,height-snowH,width,snowH)
 		} else{
@@ -334,6 +369,7 @@ class Cloud {
 		shade = 255-((clouds.length)*18); //The greater the number of clouds the "denser"/darker the clouds are
 		fill(constrain(shade,50,255));
 		noStroke();
+		angleMode(RADIANS);
 		arc(this.location.x - 10, this.location.y, 25 * size, 20 * size, PI + TWO_PI, TWO_PI); //First puff (1)
 		arc(this.location.x + 5, this.location.y, 25 * size, 35 * size, PI + TWO_PI, TWO_PI); // Upper Puff (2)
 		arc(this.location.x + 28, this.location.y, 25 * size, 45 * size, PI + TWO_PI, TWO_PI); //third puff (3)
@@ -356,7 +392,7 @@ class Drop{
 	}
 
 	drip() {
-		if (temp>0){
+		if (temp>0){ //Rain Affect
 			this.y += this.spd;
 		} else{
 			this.spd = 3;
@@ -365,7 +401,7 @@ class Drop{
 
 	}
 	display() {
-		if (temp>0){
+		if (temp>0){ //Displays the droplets
 			stroke(35,117,194);
 			line(this.x,this.y,this.x,this.y+this.length);
 		} else{
