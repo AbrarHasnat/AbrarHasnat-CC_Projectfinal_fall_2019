@@ -33,12 +33,11 @@ let angle;
 function preload(){
 	tornado = loadImage("tornado.png");
 	tornadoSound = loadSound("tornado_loop.mp3");
-	thunder = loadSound("thunder_strike_2-Mike_Koenig-2099467696.mp3");
-	
+	thunder = loadSound("thunder_strike_2-Mike_Koenig-2099467696.mp3");	
 }
+
 function setup() {
   // put setup code here
-  
 	createCanvas(screen.width,screen.height-100); //Create 
 	wind = 0;
 	temp1 = 1;
@@ -57,8 +56,8 @@ function setup() {
 	seto = false;
 	size = 2.5;
 	center = random(10,800);
-    center1 = random(10,800);
-    for (let i = 0; i<4;i++){
+  center1 = random(10,800);
+  for (let i = 0; i<4;i++){
 		let newBreeze = new Breeze();
 		breeze.push(newBreeze);
 	}
@@ -92,12 +91,8 @@ function setup() {
 //buttonTr.mousePressed(toggle);
 }
 
-function draw() {
-	
-    
+function draw() {    
 	background(bgclrR,bgclrG-((clouds.length)*20),bgclrB - ((clouds.length)*20));
-	
-	
 	if(wind>3 || wind <-3) {
 		tornadoSound.play();
 		background(200);
@@ -108,8 +103,6 @@ function draw() {
 		pop();
 	}else{
 		tornadoSound.stop();
-
-
 		temp = constrain(temp1,-1,2);
 		textSize(22);
 			fill(255);
@@ -120,11 +113,9 @@ function draw() {
 			textSize(22);
 			fill(255);
 			text('Temperature',buttonXless+65,buttonYpos+70);
-
-
 		if (clouds.length > 20 && temp > 0){
-			thunder.setVolume(0.1);
-			thunder.play();
+			//thunder.setVolume(0.1);
+			//thunder.play();
 			if (frameCount%100 == 0) {
 				x = random(0,width); //starting position of all strokes in the middle
 					y = 100; 
@@ -161,18 +152,11 @@ function draw() {
 			}
 		}
 		else {thunder.stop()}
-
-
-
-		console.log(temp);
 		for (i = 0; i < clouds.length; i++) { //Interate through clouds
 			clouds[i].display();
 			clouds[i].update();
 			clouds[i].displayRain();
-			//clouds[i].lightning();
-
 		}
-
 		if (wind>2 || wind<-2){
 			push();
 			//House
@@ -301,7 +285,7 @@ class Breeze{
 
 	display(){
 		
-		stroke(150,150,150,[0.1]);
+		stroke(150);
 		line(this.location.x-10,this.location.y,(this.location.x + 120)-10,this.location.y)
 		line(this.location.x,this.location.y+20,(this.location.x + 120),this.location.y+20)
 		line(this.location.x-10,this.location.y+40,(this.location.x + 120)-10,this.location.y+40)
@@ -356,11 +340,9 @@ class Cloud {
     	if (this.raining == true) {
 			for (let i = 0; i < this.rain.length; i++) { //Goes through raindrops
 				this.rain[i].drip();  //switched line 169
-		    	this.rain[i].display();
-		    	
-	  		}
-
-		}
+		    this.rain[i].display();
+		  }
+			}
     }
 
 
